@@ -9,6 +9,8 @@ export const useStore = create<Store>()(
       notes: [],
       selectedNoteId: null,
       setSelectedNoteId: (noteId) => set({ selectedNoteId: noteId }),
+      openDialog:false,
+      setOpenDialog:(open)=>set({openDialog:open}),
       addFolder: () => {},
       addNote: (note) =>
         set((prevState) => ({ notes: [...prevState.notes, note] })),
