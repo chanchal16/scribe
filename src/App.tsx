@@ -1,18 +1,14 @@
 import "./App.css";
 import Editor from "./components/Editor";
+import NotesList from "./components/NotesList";
 
 function App() {
-  const note = {
-    id: "001",
-    folderId: "123",
-    title: "first note",
-    content: "this is sample note", // stored as Tiptap JSON
-    updatedAt: 2,
-  };
-
   return (
-    <div className="w-3/4 h-screen mx-auto p-4 bg-slate-200">
-      <Editor note={note} />
+    <div className="w-3/4 h-screen mx-auto p-4 border-2 border-slate-200">
+      <div>
+        <Editor />
+      </div>
+      <NotesList />
     </div>
   );
 }
