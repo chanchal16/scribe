@@ -1,7 +1,7 @@
 import { useStore } from "../store/useStore";
 
 const NotesList = () => {
-  const { notes, selectedNoteId, setSelectedNoteId } = useStore();
+  const { notes, selectedNoteId, setSelectedNoteId,openDialog,setOpenDialog } = useStore();
   return (
     <div className="flex flex-wrap gap-4 items-center border-l border-r p-4">
       {notes.map((note) => (
@@ -10,7 +10,10 @@ const NotesList = () => {
           className={`p-2 w-52 border rounded cursor-pointer ${
             selectedNoteId === note.id ? "bg-blue-100" : "hover:bg-gray-50"
           }`}
-          onClick={() => setSelectedNoteId(note.id)}
+          onClick={() => {
+            setSelectedNoteId(note.id);
+            setOpenDialog(true);
+          }}
         >
           <p className="font-medium truncate">
             {note.title || "Untitled Note"}
