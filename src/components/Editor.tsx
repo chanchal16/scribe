@@ -23,6 +23,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import Toolbar from "./Toolbar";
+import { PlusIcon } from "lucide-react";
 
 const Editor = () => {
   const {
@@ -33,6 +34,7 @@ const Editor = () => {
     setSelectedNoteId,
     openDialog,
     setOpenDialog,
+    deleteNote,
   } = useStore();
   const note = notes.find((n) => n?.id === selectedNoteId);
   const [title, setTitle] = useState("");
@@ -86,6 +88,17 @@ const Editor = () => {
     }
   };
 
+  const handleDelete = () => {
+    deleteNote(selectedNoteId);
+    setTitle("");
+    setIsCreatingNote(true);
+    setSelectedNoteId(null);
+    if (editor) {
+      editor.commands.setContent("");
+    }
+    setOpenDialog(false);
+  };
+
   // Function to save a new note
   const handleSaveNote = () => {
     if (!selectedNoteId) {
@@ -115,17 +128,15 @@ const Editor = () => {
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="flex flex-col absolute right-1 bottom-4">
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogTrigger asChild>
-          <div className="flex justify-between items-center mb-4">
-            <button
-              onClick={handleCreateNote}
-              className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg flex items-center"
-            >
-              Add Note
-            </button>
-          </div>
+          <button
+            onClick={handleCreateNote}
+            className="bg-amber-500 hover:bg-amber-600  text-white p-3 rounded-full flex items-center"
+          >
+            <PlusIcon size={30} />
+          </button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -164,12 +175,15 @@ const Editor = () => {
           </DialogHeader>
           <DialogFooter>
             {(isCreatingNote || selectedNoteId) && (
-              <button
-                onClick={handleSaveNote}
-                className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg"
-              >
-                Save Note
-              </button>
+              <>
+                <button
+                  onClick={handleSaveNote}
+                  className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg"
+                >
+                  Save Note
+                </button>
+                <button onClick={handleDelete}>del</button>
+              </>
             )}
           </DialogFooter>
         </DialogContent>

@@ -4,11 +4,9 @@ import NotesList from "./components/NotesList";
 
 function App() {
   return (
-    <div className="w-3/4 h-screen mx-auto p-4 border-2 border-slate-200">
-      <div>
-        <Editor />
-      </div>
+    <div className="w-3/4 h-screen relative mx-auto p-4">
       <NotesList />
+      <Editor />
     </div>
   );
 }
