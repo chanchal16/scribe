@@ -18,7 +18,7 @@ export const useStore = create<Store>()(
         set((state) => ({
           notes: state.notes.map((n) => (n.id === note.id ? note : n)),
         })),
-      deleteNote: () => {},
+      deleteNote: (id) => set((state)=>({notes:state.notes.filter(note=>note.id !== id)})),
     }),
     { name: "notes-app-store" }
   )
