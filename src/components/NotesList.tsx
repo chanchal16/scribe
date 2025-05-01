@@ -1,10 +1,12 @@
+import { searchNotes } from "@/lib/searchNotes";
 import { useStore } from "../store/useStore";
 
 const NotesList = () => {
-  const { notes, setSelectedNoteId, setOpenDialog } = useStore();
+  const { notes, setSelectedNoteId, setOpenDialog, searchQuery } = useStore();
+  const filteredNotes = searchNotes(notes, searchQuery);
   return (
     <div className="flex flex-wrap gap-4 items-center p-4">
-      {notes.map((note) => (
+      {filteredNotes.map((note) => (
         <div
           key={note.id}
           className={`py-2 px-3 w-52 min-h-32 flex flex-col gap-3 relative  rounded bg-amber-100 hover:bg-amber-50 cursor-pointer`}
