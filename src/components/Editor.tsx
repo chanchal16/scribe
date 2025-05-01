@@ -23,7 +23,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import Toolbar from "./Toolbar";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, Trash } from "lucide-react";
 
 const Editor = () => {
   const {
@@ -128,7 +128,7 @@ const Editor = () => {
   };
 
   return (
-    <div className="flex flex-col absolute right-1 bottom-4">
+    <div className="flex flex-col absolute right-2 bottom-4">
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogTrigger asChild>
           <button
@@ -178,11 +178,16 @@ const Editor = () => {
               <>
                 <button
                   onClick={handleSaveNote}
-                  className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg"
+                  className="text-amber-400 font-semibold hover:bg-gray-100 py-1.5 px-2 rounded-lg"
                 >
-                  Save Note
+                  Save
                 </button>
-                <button onClick={handleDelete}>del</button>
+                <button
+                  onClick={handleDelete}
+                  className="text-gray-400 hover:text-gray-500"
+                >
+                  <Trash size={20} />
+                </button>
               </>
             )}
           </DialogFooter>
