@@ -18,7 +18,9 @@ export type Store = {
   selectedNoteId: string | null;
   setSelectedNoteId: (noteId: string | null) => void;
   openDialog: boolean;
-  setOpenDialog: (open:boolean)=> void
+  setOpenDialog: (open: boolean) => void;
+  searchQuery: string;
+  setSearchQuery: (searchQuery: string) => void;
   addFolder: (folder: Folder) => void;
   addNote: (note: Note) => void;
   updateNote: (note: Note) => void;
