@@ -1,22 +1,28 @@
+import { searchNotes } from "@/lib/searchNotes";
 import { useStore } from "../store/useStore";
 
 const NotesList = () => {
-  const { notes, selectedNoteId, setSelectedNoteId } = useStore();
+  const { notes, setSelectedNoteId, setOpenDialog, searchQuery } = useStore();
+  const filteredNotes = searchNotes(notes, searchQuery);
   return (
-    <div className="flex flex-wrap gap-4 items-center border-l border-r p-4">
-      {notes.map((note) => (
+    <div className="flex flex-wrap gap-4 items-center p-4">
+      {filteredNotes.map((note) => (
         <div
           key={note.id}
-          className={`p-2 w-52 border rounded cursor-pointer ${
-            selectedNoteId === note.id ? "bg-blue-100" : "hover:bg-gray-50"
-          }`}
-          onClick={() => setSelectedNoteId(note.id)}
+          className={`py-2 px-3 w-52 min-h-32 flex flex-col gap-3 relative  rounded bg-amber-100 hover:bg-amber-50 cursor-pointer`}
+          onClick={() => {
+            setSelectedNoteId(note.id);
+            setOpenDialog(true);
+          }}
         >
           <p className="font-medium truncate">
             {note.title || "Untitled Note"}
           </p>
-          <div dangerouslySetInnerHTML={{ __html: note.content }} />
-          <p className="text-xs text-gray-500">
+          <div
+            dangerouslySetInnerHTML={{ __html: note.content }}
+            className="truncate"
+          />
+          <p className="text-xs text-amber-600 absolute bottom-2">
             {new Date(note.updatedAt).toLocaleString()}
           </p>
         </div>

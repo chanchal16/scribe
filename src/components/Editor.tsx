@@ -1,18 +1,58 @@
-import { EditorContent, useEditor } from "@tiptap/react";
+import {
+  EditorContent,
+  FloatingMenu,
+  BubbleMenu,
+  useEditor,
+} from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import Underline from "@tiptap/extension-underline";
+import Link from "@tiptap/extension-link";
+import TextAlign from "@tiptap/extension-text-align";
+import Subscript from "@tiptap/extension-subscript";
+import Superscript from "@tiptap/extension-superscript";
 import { useStore } from "../store/useStore";
 import { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import Toolbar from "./Toolbar";
+import { PlusIcon, Trash } from "lucide-react";
 
 const Editor = () => {
-  const { notes, selectedNoteId, updateNote, addNote, setSelectedNoteId } =
-    useStore();
+  const {
+    notes,
+    selectedNoteId,
+    updateNote,
+    addNote,
+    setSelectedNoteId,
+    openDialog,
+    setOpenDialog,
+    deleteNote,
+  } = useStore();
   const note = notes.find((n) => n?.id === selectedNoteId);
   const [title, setTitle] = useState("");
   const [isCreatingNote, setIsCreatingNote] = useState(false);
 
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions: [
+      StarterKit.configure({
+        heading: {
+          levels: [1, 2, 3, 4, 5, 6],
+        },
+      }),
+      Underline,
+      Link,
+      Subscript,
+      Superscript,
+      TextAlign.configure({ types: ["heading", "paragraph"] }),
+    ],
     content: note?.content ?? "",
     onUpdate: ({ editor }) => {
       if (selectedNoteId && note) {
@@ -41,10 +81,22 @@ const Editor = () => {
     setTitle("");
     setIsCreatingNote(true);
     setSelectedNoteId(null);
+    setOpenDialog(true);
 
     if (editor) {
       editor.commands.setContent("");
     }
+  };
+
+  const handleDelete = () => {
+    deleteNote(selectedNoteId);
+    setTitle("");
+    setIsCreatingNote(true);
+    setSelectedNoteId(null);
+    if (editor) {
+      editor.commands.setContent("");
+    }
+    setOpenDialog(false);
   };
 
   // Function to save a new note
@@ -61,6 +113,7 @@ const Editor = () => {
     }
 
     setIsCreatingNote(false);
+    setOpenDialog(false);
     setTitle("");
     setSelectedNoteId(null);
   };
@@ -75,72 +128,71 @@ const Editor = () => {
   };
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="flex justify-between items-center mb-4">
-        <button
-          onClick={handleCreateNote}
-          className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg flex items-center"
-        >
-          <svg
-            className="w-5 h-5 mr-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
-          Add Note
-        </button>
-
-        {(isCreatingNote || selectedNoteId) && (
+    <div className="flex flex-col absolute right-2 bottom-4">
+      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+        <DialogTrigger asChild>
           <button
-            onClick={handleSaveNote}
-            className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg"
+            onClick={handleCreateNote}
+            className="bg-amber-500 hover:bg-amber-600  text-white p-3 rounded-full flex items-center"
           >
-            Save Note
+            <PlusIcon size={30} />
           </button>
-        )}
-      </div>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle asChild>
+              <input
+                type="text"
+                value={note?.title ?? title}
+                onChange={handleTitleChange}
+                className="text-2xl font-bold mb-4 p-2 w-full focus:outline-none  rounded"
+                placeholder="Note title"
+              />
+            </DialogTitle>
+            <DialogDescription asChild>
+              <>
+                <div className=" rounded-lg flex-grow overflow-y-auto">
+                  <div className="control-group">
+                    {editor && (
+                      <BubbleMenu editor={editor}>
+                        <Toolbar editor={editor} />
+                      </BubbleMenu>
+                    )}
+                  </div>
+                  <EditorContent
+                    editor={editor}
+                    className="editor-container prose prose-sm prose-p:!my-[2px] sm:prose  max-w-none border-none ring-offset-transparent focus:outline-none h-[300px] prose-headings:!my-1 overflow-y-auto px-2"
+                  />
+                </div>
 
-      {!note && !isCreatingNote ? (
-        <div className="flex-1 flex items-center justify-center text-gray-400">
-          <div className="text-center">
-            <h3 className="text-xl font-medium mb-2">No note selected</h3>
-            <p>
-              Select a note from the list or click "Add Note" to create a new
-              one
-            </p>
-          </div>
-        </div>
-      ) : (
-        <div>
-          <input
-            type="text"
-            value={note?.title ?? title}
-            onChange={handleTitleChange}
-            className="text-2xl font-bold mb-4 p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
-            placeholder="Note title"
-          />
-
-          <div className="border border-blue-500 rounded-lg flex-grow overflow-y-auto">
-            <div className="p-4">
-              <EditorContent editor={editor} className="prose max-w-none" />
-            </div>
-          </div>
-
-          {note && (
-            <div className="mt-2 text-sm text-gray-500">
-              Last updated: {new Date(note.updatedAt).toLocaleString()}
-            </div>
-          )}
-        </div>
-      )}
+                {note && (
+                  <div className="mt-2 text-sm text-gray-500">
+                    Last updated: {new Date(note.updatedAt).toLocaleString()}
+                  </div>
+                )}
+              </>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            {(isCreatingNote || selectedNoteId) && (
+              <>
+                <button
+                  onClick={handleSaveNote}
+                  className="text-amber-400 font-semibold hover:bg-gray-100 py-1.5 px-2 rounded-lg"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="text-gray-400 hover:text-gray-500"
+                >
+                  <Trash size={20} />
+                </button>
+              </>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
