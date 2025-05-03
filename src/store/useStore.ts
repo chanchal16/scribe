@@ -43,6 +43,13 @@ export const useStore = create<Store>()(
         set((state) => ({
           folders: state.folders.filter((folder) => folder.id !== id),
         })),
+      moveNoteToFolder: (noteId: string, folderId: string) => {
+        set((state) => ({
+          notes: state.notes.map((note) =>
+            note.id === noteId ? { ...note, folderId } : note
+          ),
+        }));
+      },
     }),
     { name: "notes-app-store" }
   )
