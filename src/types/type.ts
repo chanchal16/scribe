@@ -15,14 +15,25 @@ export type Note = {
 export type Store = {
   folders: Folder[];
   notes: Note[];
+  selectedFolderId: string | null;
   selectedNoteId: string | null;
   setSelectedNoteId: (noteId: string | null) => void;
   openDialog: boolean;
   setOpenDialog: (open: boolean) => void;
   searchQuery: string;
   setSearchQuery: (searchQuery: string) => void;
+  selectFolder: (id: string | null) => void;
   addFolder: (folder: Folder) => void;
   addNote: (note: Note) => void;
   updateNote: (note: Note) => void;
   deleteNote: (id: string) => void;
+  updateFolder: (folder: Folder) => void;
+  deleteFolder: (id: string) => void;
+};
+
+export type IFolderList = {
+  folder: Folder;
+  selectedFolderId: string | null;
+  setIsCreateFolder: React.Dispatch<React.SetStateAction<boolean>>;
+  setFolderName: React.Dispatch<React.SetStateAction<string>>;
 };
