@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dialog";
 import Toolbar from "./Toolbar";
 import { PlusIcon, Trash } from "lucide-react";
+import FoldersPopover from "./FoldersPopover";
 
 const Editor = () => {
   const {
@@ -129,7 +130,7 @@ const Editor = () => {
 
   return (
     <div className="flex flex-col absolute right-2 bottom-4">
-      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+      <Dialog modal={false} open={openDialog} onOpenChange={setOpenDialog}>
         <DialogTrigger asChild>
           <button
             onClick={handleCreateNote}
@@ -150,7 +151,7 @@ const Editor = () => {
               />
             </DialogTitle>
             <DialogDescription asChild>
-              <>
+              <div>
                 <div className=" rounded-lg flex-grow overflow-y-auto">
                   <div className="control-group">
                     {editor && (
@@ -170,12 +171,13 @@ const Editor = () => {
                     Last updated: {new Date(note.updatedAt).toLocaleString()}
                   </div>
                 )}
-              </>
+              </div>
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             {(isCreatingNote || selectedNoteId) && (
               <>
+                <FoldersPopover note={note} />
                 <button
                   onClick={handleSaveNote}
                   className="text-amber-400 font-semibold hover:bg-gray-100 py-1.5 px-2 rounded-lg"
