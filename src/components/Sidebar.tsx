@@ -78,7 +78,7 @@ const Sidebar = () => {
         </div>
       )}
 
-      <div>
+      <div className="mt-5 flex flex-col gap-3">
         {folders.map((folder) => (
           <FolderList
             key={folder.id}
