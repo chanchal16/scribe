@@ -2,8 +2,20 @@ import { searchNotes } from "@/lib/searchNotes";
 import { useStore } from "../store/useStore";
 
 const NotesList = () => {
-  const { notes, setSelectedNoteId, setOpenDialog, searchQuery } = useStore();
-  const filteredNotes = searchNotes(notes, searchQuery);
+  const {
+    notes,
+    setSelectedNoteId,
+    setOpenDialog,
+    searchQuery,
+    selectedFolderId,
+  } = useStore();
+  const filteredNotesByFolder = notes.filter(
+    (note) => selectedFolderId === "all" || note.folderId === selectedFolderId
+  );
+  const filteredNotes = searchNotes(
+    filteredNotesByFolder,
+    searchQuery.toLowerCase()
+  );
   return (
     <div className="flex flex-wrap gap-4 items-center p-4">
       {filteredNotes.map((note) => (
