@@ -29,6 +29,7 @@ export type Store = {
   deleteNote: (id: string) => void;
   updateFolder: (folder: Folder) => void;
   deleteFolder: (id: string) => void;
+  moveNoteToFolder: (noteId: string, folderId: string) => void;
 };
 
 export type IFolderList = {
