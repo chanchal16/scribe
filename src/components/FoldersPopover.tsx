@@ -28,8 +28,8 @@ const FoldersPopover = ({ note }: { note: Note }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="border-none">
-          <FolderInput size={16} />
+        <button className="border-none p-2 hover:bg-[#5f636826] hover:rounded-full">
+          <FolderInput size={18} />
         </button>
       </DropdownMenuTrigger>
 
