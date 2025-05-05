@@ -25,6 +25,7 @@ import {
 import Toolbar from "./Toolbar";
 import { PlusIcon, Trash } from "lucide-react";
 import FoldersPopover from "./FoldersPopover";
+import NoteColorPicker from "./NoteColorPicker";
 
 const Editor = () => {
   const {
@@ -110,6 +111,7 @@ const Editor = () => {
         content: editor ? editor.getHTML() : "",
         updatedAt: Date.now(),
         folderId: "all",
+        color: "#fff",
       });
     }
 
@@ -139,14 +141,14 @@ const Editor = () => {
             <PlusIcon size={30} />
           </button>
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent style={{ backgroundColor: note?.color ?? "#fff475" }}>
           <DialogHeader>
             <DialogTitle asChild>
               <input
                 type="text"
                 value={note?.title ?? title}
                 onChange={handleTitleChange}
-                className="text-2xl font-bold mb-4 p-2 w-full focus:outline-none  rounded"
+                className="text-2xl bg-transparent font-bold mb-4 p-2 w-full focus:outline-none  rounded"
                 placeholder="Note title"
               />
             </DialogTitle>
@@ -177,18 +179,32 @@ const Editor = () => {
           <DialogFooter>
             {(isCreatingNote || selectedNoteId) && (
               <>
-                <FoldersPopover note={note} />
+                {note && (
+                  <>
+                    <NoteColorPicker
+                      note={note}
+                      onChangeColor={(color) => {
+                        if (note) {
+                          updateNote({ ...note, color });
+                        }
+                      }}
+                    />
+                    <FoldersPopover note={note} />
+                  </>
+                )}
+                {selectedNoteId && (
+                  <button
+                    onClick={handleDelete}
+                    className="p-2 hover:bg-[#5f636826] hover:rounded-full"
+                  >
+                    <Trash size={18} />
+                  </button>
+                )}
                 <button
                   onClick={handleSaveNote}
-                  className="text-amber-400 font-semibold hover:bg-gray-100 py-1.5 px-2 rounded-lg"
+                  className=" font-semibold hover:bg-[#5f636826] py-1.5 px-2 rounded-lg"
                 >
                   Save
-                </button>
-                <button
-                  onClick={handleDelete}
-                  className="text-gray-400 hover:text-gray-500"
-                >
-                  <Trash size={20} />
                 </button>
               </>
             )}
