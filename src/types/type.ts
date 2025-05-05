@@ -10,6 +10,7 @@ export type Note = {
   title: string;
   content: string; // stored as Tiptap JSON
   updatedAt: number;
+  color: string;
 };
 
 export type Store = {
