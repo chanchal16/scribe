@@ -1,13 +1,8 @@
 import { searchNotes } from "@/lib/searchNotes";
 import { useStore } from "../store/useStore";
-import { useState } from "react";
 import FoldersPopover from "./FoldersPopover";
 
 const NotesList = () => {
-  const [openPopoverNoteId, setOpenPopoverNoteId] = useState<string | null>(
-    null
-  );
-
   const {
     notes,
     setSelectedNoteId,
@@ -28,15 +23,14 @@ const NotesList = () => {
       {filteredNotes.map((note) => (
         <div
           key={note.id}
-          className={`py-2 px-3 w-52 min-h-32 relative rounded bg-amber-100 hover:bg-amber-50 cursor-pointer`}
+          style={{ backgroundColor: note.color || "#fff475" }}
+          className={`py-2 px-3 w-52 min-h-32 relative rounded hover:bg-amber-50 cursor-pointer`}
         >
           <div
             className="flex flex-col gap-3"
             onClick={() => {
-              if (openPopoverNoteId !== note.id) {
-                setSelectedNoteId(note.id);
-                setOpenDialog(true);
-              }
+              setSelectedNoteId(note.id);
+              setOpenDialog(true);
             }}
           >
             <p className="font-medium truncate">
@@ -47,8 +41,8 @@ const NotesList = () => {
               className="truncate"
             />
           </div>
-          <div className=" flex flex-row justify-between w-[85%] absolute bottom-2">
-            <span className="text-xs text-amber-600 ">
+          <div className=" flex flex-row items-center justify-between w-[90%] absolute bottom-2">
+            <span className="text-xs ">
               {new Date(note.updatedAt).toLocaleString()}
             </span>
             <FoldersPopover note={note} />
