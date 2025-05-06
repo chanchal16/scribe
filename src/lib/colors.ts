@@ -8,7 +8,6 @@ export const COLORS = [
 ];
 
 export const noteColors = [
-  "#fff", // Default (white)
   "#f28b82", // Red
   "#fbbc04", // Orange
   "#fff475", // Yellow
