@@ -10,7 +10,7 @@ function App() {
       <Navbar />
       <div className=" flex h-[90%]  ">
         <Sidebar />
-        <div>
+        <div className="w-full">
           <NotesList />
           <Editor />
         </div>
