@@ -10,9 +10,15 @@ import { searchFolders } from "@/lib/searchFolders";
 import { Note } from "@/types/type";
 
 const FoldersPopover = ({ note }: { note: Note }) => {
-  const { folders, selectedFolderId, moveNoteToFolder, setOpenDialog } =
-    useStore();
+  const {
+    folders,
+    selectedFolderId,
+    moveNoteToFolder,
+    setOpenDialog,
+    setExpandedNoteId,
+  } = useStore();
   const [searchFolderQuery, setSearchFolderQuery] = useState<string>("");
+  const [showFoldersPopover, setShowFoldersPopover] = useState<boolean>(false);
 
   const filteredFolders = searchFolders(
     folders,
@@ -23,12 +29,20 @@ const FoldersPopover = ({ note }: { note: Note }) => {
     moveNoteToFolder(noteId, folderId);
     setSearchFolderQuery("");
     setOpenDialog(false);
+    setExpandedNoteId(null);
+    setShowFoldersPopover(false);
   };
 
   return (
-    <DropdownMenu>
+    <DropdownMenu
+      open={showFoldersPopover}
+      onOpenChange={setShowFoldersPopover}
+    >
       <DropdownMenuTrigger asChild>
-        <button className="border-none p-2 hover:bg-[#5f636826] hover:rounded-full">
+        <button
+          onClick={(e) => e.stopPropagation()}
+          className="border-none p-2 hover:bg-[#5f636826] hover:rounded-full"
+        >
           <FolderInput size={18} />
         </button>
       </DropdownMenuTrigger>
