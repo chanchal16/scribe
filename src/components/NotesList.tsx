@@ -50,7 +50,7 @@ const NotesList = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative font-kalam">
       {/* Overlay */}
       {expandedNoteId && (
         <div
