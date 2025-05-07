@@ -10,7 +10,7 @@ export const COLORS = [
 export const noteColors = [
   "#f28b82", // Red
   "#fbbc04", // Orange
-  "#fff475", // Yellow
+  "#fde68a",            // "#fff475", // Yellow
   "#ccff90", // Green
   "#a7ffeb", // Teal
   "#cbf0f8", // Blue
