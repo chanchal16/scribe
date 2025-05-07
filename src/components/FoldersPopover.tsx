@@ -7,7 +7,8 @@ import {
 import { Folder, FolderInput } from "lucide-react";
 import { useStore } from "@/store/useStore";
 import { searchFolders } from "@/lib/searchFolders";
-import { Note } from "@/types/type";
+import { Folder as IFolder, Note } from "@/types/type";
+import { toast } from 'react-toastify';
 
 const FoldersPopover = ({ note }: { note: Note }) => {
   const {
@@ -25,12 +26,13 @@ const FoldersPopover = ({ note }: { note: Note }) => {
     searchFolderQuery.toLowerCase()
   );
 
-  const handleMoveNote = (noteId: string, folderId: string) => {
-    moveNoteToFolder(noteId, folderId);
+  const handleMoveNote = (noteId: string, folder: IFolder) => {
+    moveNoteToFolder(noteId, folder.id);
     setSearchFolderQuery("");
     setOpenDialog(false);
     setExpandedNoteId(null);
     setShowFoldersPopover(false);
+    toast(`Folder moved to ${folder.name}`)
   };
 
   return (
@@ -58,7 +60,7 @@ const FoldersPopover = ({ note }: { note: Note }) => {
         {filteredFolders.map((folder) => (
           <div
             key={folder.id}
-            onClick={() => handleMoveNote(note.id, folder.id)}
+            onClick={() => handleMoveNote(note.id, folder)}
             className={`flex gap-2 p-1 items-center hover:bg-gray-100 cursor-pointer ${
               selectedFolderId === folder.id ? "bg-gray-100" : "bg-transparent"
             }`}

@@ -5,6 +5,7 @@ import NoteColorPicker from "./NoteColorPicker";
 import FoldersPopover from "./FoldersPopover";
 import { Trash } from "lucide-react";
 import { Note } from "@/types/type";
+import { toast } from 'react-toastify';
 
 const ExpandedNoteCard = ({ note }: { note: Note }) => {
   const { updateNote, deleteNote, setExpandedNoteId } = useStore();
@@ -19,6 +20,7 @@ const ExpandedNoteCard = ({ note }: { note: Note }) => {
         updatedAt: Date.now(),
         color: note.color,
       });
+      toast('Note updated!')
     },
   });
 
@@ -35,7 +37,7 @@ const ExpandedNoteCard = ({ note }: { note: Note }) => {
       {editor && (
         <EditorContent
           editor={editor}
-          className="prose max-w-none border-none focus:outline-none h-[200px] overflow-y-auto"
+          className="prose editor-container max-w-none border-none focus:outline-none h-[200px] overflow-y-auto scrollbar-hide"
         />
       )}
 
@@ -54,6 +56,7 @@ const ExpandedNoteCard = ({ note }: { note: Note }) => {
             onClick={() => {
               deleteNote(note.id);
               setExpandedNoteId(null);
+              toast('Note deleted successfully!')
             }}
             className="p-2 hover:bg-[#5f636826] hover:rounded-full"
           >
