@@ -58,28 +58,39 @@ const NotesList = () => {
           onClick={handleClose}
         />
       )}
+      {!filteredNotes.length ? (
+        <div className="flex flex-col gap-2 items-center justify-center h-full mt-10">
+          <img
+            src="no-notes.svg"
+            alt="notes"
+            className="w-56 h-52 md:w-72 md:h-80 m-auto"
+          />
+          <h3 className="text-lg md:text-2xl text-gray-400">
+            No notes here yet
+          </h3>
+        </div>
+      ) : (
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(208px,1fr))] gap-4 p-4">
+          {filteredNotes.map((note) => {
+            const isActiveNote = expandedNoteId === note.id;
 
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(208px,1fr))] gap-4 p-4">
-        {filteredNotes.map((note) => {
-          const isActiveNote = expandedNoteId === note.id;
-
-          return (
-            <div
-              key={note.id}
-              ref={(el) => (cardRefs.current[note.id] = el)}
-              className={`relative transition-all duration-200 ${
-                isActiveNote ? "z-20" : "z-0"
-              }`}
-              style={{
-                height: isActiveNote || isAnimating ? "8rem" : "auto",
-                ...(isActiveNote ? animationStyle : {}),
-              }}
-            >
+            return (
               <div
+                key={note.id}
+                ref={(el) => (cardRefs.current[note.id] = el)}
+                className={`relative transition-all duration-200 ${
+                  isActiveNote ? "z-20" : "z-0"
+                }`}
                 style={{
-                  backgroundColor: note.color || "#fff475",
+                  height: isActiveNote || isAnimating ? "8rem" : "auto",
+                  ...(isActiveNote ? animationStyle : {}),
                 }}
-                className={`
+              >
+                <div
+                  style={{
+                    backgroundColor: note.color || "#fff475",
+                  }}
+                  className={`
                   rounded cursor-pointer overflow-hidden
                   ${
                     isActiveNote
@@ -88,35 +99,36 @@ const NotesList = () => {
                   }
                   ${isAnimating && !isActiveNote ? "animate-close" : ""}
                 `}
-                onClick={() => !isActiveNote && handleCardClick(note.id)}
-              >
-                {isActiveNote || isAnimating ? (
-                  <ExpandedNoteCard note={note} />
-                ) : (
-                  <div className="flex flex-col gap-3 h-full">
-                    <p className="font-medium truncate">
-                      {note.title || "Untitled Note"}
-                    </p>
-                    <div
-                      dangerouslySetInnerHTML={{ __html: note.content }}
-                      className="truncate flex-grow"
-                    />
-                    <div
-                      onClick={(e) => e.stopPropagation()}
-                      className="flex flex-row items-center justify-between w-[90%] absolute bottom-2"
-                    >
-                      <span className="text-xs">
-                        {new Date(note.updatedAt).toLocaleString()}
-                      </span>
-                      <FoldersPopover note={note} />
+                  onClick={() => !isActiveNote && handleCardClick(note.id)}
+                >
+                  {isActiveNote || isAnimating ? (
+                    <ExpandedNoteCard note={note} />
+                  ) : (
+                    <div className="flex flex-col gap-3 h-full">
+                      <p className="font-medium truncate">
+                        {note.title || "Untitled Note"}
+                      </p>
+                      <div
+                        dangerouslySetInnerHTML={{ __html: note.content }}
+                        className="truncate flex-grow"
+                      />
+                      <div
+                        onClick={(e) => e.stopPropagation()}
+                        className="flex flex-row items-center justify-between w-[90%] absolute bottom-2"
+                      >
+                        <span className="text-xs">
+                          {new Date(note.updatedAt).toLocaleString()}
+                        </span>
+                        <FoldersPopover note={note} />
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
