@@ -35,7 +35,7 @@ const ExpandedNoteCard = ({ note }: { note: Note }) => {
       {editor && (
         <EditorContent
           editor={editor}
-          className="prose max-w-none border-none focus:outline-none h-[200px] overflow-y-auto"
+          className="prose editor-container max-w-none border-none focus:outline-none h-[200px] overflow-y-auto scrollbar-hide"
         />
       )}
 

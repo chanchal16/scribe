@@ -1,8 +1,4 @@
-import {
-  EditorContent,
-  BubbleMenu,
-  useEditor,
-} from "@tiptap/react";
+import { EditorContent, BubbleMenu, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
@@ -94,17 +90,20 @@ const Editor = () => {
   };
 
   return (
-    <div className="flex flex-col absolute right-4 bottom-4">
+    <div className="flex flex-col fixed right-4 bottom-4">
       <Dialog modal={false} open={openDialog} onOpenChange={setOpenDialog}>
         <DialogTrigger asChild>
           <button
             onClick={handleCreateNote}
-            className="bg-amber-500 hover:bg-amber-600  text-white p-3 rounded-full flex items-center"
+            className="bg-amber-500 hover:bg-amber-600 text-white p-3 rounded-full flex items-center"
           >
             <PlusIcon size={30} />
           </button>
         </DialogTrigger>
-        <DialogContent style={{ backgroundColor: noteColor }}>
+        <DialogContent
+          className="font-kalam"
+          style={{ backgroundColor: noteColor }}
+        >
           <DialogHeader>
             <DialogTitle asChild>
               <input
@@ -127,13 +126,13 @@ const Editor = () => {
                   </div>
                   <EditorContent
                     editor={editor}
-                    className="editor-container prose prose-sm prose-p:!my-[2px] sm:prose  max-w-none border-none ring-offset-transparent focus:outline-none h-[300px] prose-headings:!my-1 overflow-y-auto px-2"
+                    className="editor-container prose prose-sm prose-p:!my-[2px] sm:prose  max-w-none border-none ring-offset-transparent focus:outline-none h-[300px] prose-headings:!my-1 overflow-y-auto scrollbar-hide px-2"
                   />
                 </div>
               </div>
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
+          <DialogFooter className="flex-row items-center justify-end">
             {isCreatingNote && (
               <>
                 <div onClick={(e) => e.stopPropagation()}>
