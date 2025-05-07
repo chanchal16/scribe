@@ -6,7 +6,7 @@ export type Folder = {
 
 export type Note = {
   id: string;
-  folderId?: string;
+  folderId?: string | null;
   title: string;
   content: string; // stored as Tiptap JSON
   updatedAt: number;
@@ -18,6 +18,8 @@ export type Store = {
   notes: Note[];
   selectedFolderId: string | null;
   selectedNoteId: string | null;
+  expandedNoteId: string | null;
+  setExpandedNoteId: (id: string | null) => void;
   setSelectedNoteId: (noteId: string | null) => void;
   openDialog: boolean;
   setOpenDialog: (open: boolean) => void;

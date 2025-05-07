@@ -1,6 +1,5 @@
 import {
   EditorContent,
-  FloatingMenu,
   BubbleMenu,
   useEditor,
 } from "@tiptap/react";
@@ -23,23 +22,22 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import Toolbar from "./Toolbar";
-import { PlusIcon, Trash } from "lucide-react";
-import FoldersPopover from "./FoldersPopover";
+import { PlusIcon } from "lucide-react";
 import NoteColorPicker from "./NoteColorPicker";
 
 const Editor = () => {
   const {
     notes,
     selectedNoteId,
-    updateNote,
     addNote,
     setSelectedNoteId,
     openDialog,
     setOpenDialog,
-    deleteNote,
+    selectedFolderId,
   } = useStore();
   const note = notes.find((n) => n?.id === selectedNoteId);
   const [title, setTitle] = useState("");
+  const [noteColor, setNoteColor] = useState("#fff475");
   const [isCreatingNote, setIsCreatingNote] = useState(false);
 
   const editor = useEditor({
@@ -56,29 +54,16 @@ const Editor = () => {
       TextAlign.configure({ types: ["heading", "paragraph"] }),
     ],
     content: note?.content ?? "",
-    onUpdate: ({ editor }) => {
-      if (selectedNoteId && note) {
-        // Update existing note
-        updateNote({
-          ...note,
-          content: editor.getHTML(),
-          updatedAt: Date.now(),
-        });
-      }
-    },
   });
 
   useEffect(() => {
     if (editor) {
-      if (note) {
-        editor.commands.setContent(note.content || "");
-      } else if (isCreatingNote) {
+      if (isCreatingNote) {
         editor.commands.setContent("");
       }
     }
-  }, [note?.id, isCreatingNote, editor]);
+  }, [isCreatingNote, editor]);
 
-  // Function to handle creating a new note
   const handleCreateNote = () => {
     setTitle("");
     setIsCreatingNote(true);
@@ -90,18 +75,6 @@ const Editor = () => {
     }
   };
 
-  const handleDelete = () => {
-    deleteNote(selectedNoteId);
-    setTitle("");
-    setIsCreatingNote(true);
-    setSelectedNoteId(null);
-    if (editor) {
-      editor.commands.setContent("");
-    }
-    setOpenDialog(false);
-  };
-
-  // Function to save a new note
   const handleSaveNote = () => {
     if (!selectedNoteId) {
       const newNoteId = nanoid();
@@ -110,28 +83,18 @@ const Editor = () => {
         title: title,
         content: editor ? editor.getHTML() : "",
         updatedAt: Date.now(),
-        folderId: "all",
-        color: "#fff",
+        folderId: "all" && selectedFolderId,
+        color: noteColor ?? "#fff475",
       });
     }
-
     setIsCreatingNote(false);
     setOpenDialog(false);
     setTitle("");
     setSelectedNoteId(null);
   };
 
-  // Function to handle title change
-  const handleTitleChange = (e: any) => {
-    if (note) {
-      updateNote({ ...note, title: e.target.value, updatedAt: Date.now() });
-    } else {
-      setTitle(e.target.value);
-    }
-  };
-
   return (
-    <div className="flex flex-col absolute right-2 bottom-4">
+    <div className="flex flex-col absolute right-4 bottom-4">
       <Dialog modal={false} open={openDialog} onOpenChange={setOpenDialog}>
         <DialogTrigger asChild>
           <button
@@ -141,13 +104,13 @@ const Editor = () => {
             <PlusIcon size={30} />
           </button>
         </DialogTrigger>
-        <DialogContent style={{ backgroundColor: note?.color ?? "#fff475" }}>
+        <DialogContent style={{ backgroundColor: noteColor }}>
           <DialogHeader>
             <DialogTitle asChild>
               <input
                 type="text"
                 value={note?.title ?? title}
-                onChange={handleTitleChange}
+                onChange={(e) => setTitle(e.target.value)}
                 className="text-2xl bg-transparent font-bold mb-4 p-2 w-full focus:outline-none  rounded"
                 placeholder="Note title"
               />
@@ -167,39 +130,20 @@ const Editor = () => {
                     className="editor-container prose prose-sm prose-p:!my-[2px] sm:prose  max-w-none border-none ring-offset-transparent focus:outline-none h-[300px] prose-headings:!my-1 overflow-y-auto px-2"
                   />
                 </div>
-
-                {note && (
-                  <div className="mt-2 text-sm text-gray-500">
-                    Last updated: {new Date(note.updatedAt).toLocaleString()}
-                  </div>
-                )}
               </div>
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            {(isCreatingNote || selectedNoteId) && (
+            {isCreatingNote && (
               <>
-                {note && (
-                  <>
-                    <NoteColorPicker
-                      note={note}
-                      onChangeColor={(color) => {
-                        if (note) {
-                          updateNote({ ...note, color });
-                        }
-                      }}
-                    />
-                    <FoldersPopover note={note} />
-                  </>
-                )}
-                {selectedNoteId && (
-                  <button
-                    onClick={handleDelete}
-                    className="p-2 hover:bg-[#5f636826] hover:rounded-full"
-                  >
-                    <Trash size={18} />
-                  </button>
-                )}
+                <div onClick={(e) => e.stopPropagation()}>
+                  <NoteColorPicker
+                    onChangeColor={(color) => {
+                      console.log("color", color);
+                      setNoteColor(color);
+                    }}
+                  />
+                </div>
                 <button
                   onClick={handleSaveNote}
                   className=" font-semibold hover:bg-[#5f636826] py-1.5 px-2 rounded-lg"

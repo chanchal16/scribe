@@ -15,6 +15,8 @@ export const useStore = create<Store>()(
       notes: [],
       selectedNoteId: null,
       selectedFolderId: null,
+      expandedNoteId: null as string | null,
+      setExpandedNoteId: (id: string | null) => set({ expandedNoteId: id }),
       setSelectedNoteId: (noteId) => set({ selectedNoteId: noteId }),
       openDialog: false,
       setOpenDialog: (open) => set({ openDialog: open }),
