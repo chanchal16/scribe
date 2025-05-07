@@ -4,6 +4,7 @@ import Editor from "./components/Editor";
 import Navbar from "./components/Navbar";
 import NotesList from "./components/NotesList";
 import Sidebar from "./components/Sidebar";
+import { Slide, ToastContainer } from "react-toastify";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
@@ -18,6 +19,11 @@ function App() {
         <div className="w-full">
           <NotesList />
           <Editor />
+          <ToastContainer
+            transition={Slide}
+            autoClose={3000}
+            closeOnClick={true}
+          />
         </div>
       </div>
     </div>

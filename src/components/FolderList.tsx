@@ -7,6 +7,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 const FolderList = ({
   folder,
@@ -30,6 +31,7 @@ const FolderList = ({
   const handleDeleteFolder = (id: string) => {
     deleteFolder(id);
     selectFolder("all");
+    toast("Folder deleted successfully!");
   };
   return (
     <div

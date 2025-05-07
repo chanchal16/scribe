@@ -20,6 +20,7 @@ import {
 import Toolbar from "./Toolbar";
 import { PlusIcon } from "lucide-react";
 import NoteColorPicker from "./NoteColorPicker";
+import { toast } from "react-toastify";
 
 const Editor = () => {
   const {
@@ -33,7 +34,7 @@ const Editor = () => {
   } = useStore();
   const note = notes.find((n) => n?.id === selectedNoteId);
   const [title, setTitle] = useState("");
-  const [noteColor, setNoteColor] = useState("#fff475");
+  const [noteColor, setNoteColor] = useState("#fde68a");
   const [isCreatingNote, setIsCreatingNote] = useState(false);
 
   const editor = useEditor({
@@ -80,9 +81,10 @@ const Editor = () => {
         content: editor ? editor.getHTML() : "",
         updatedAt: Date.now(),
         folderId: "all" && selectedFolderId,
-        color: noteColor ?? "#fff475",
+        color: noteColor ?? "#fde68a",
       });
     }
+    toast("Note Created!");
     setIsCreatingNote(false);
     setOpenDialog(false);
     setTitle("");
