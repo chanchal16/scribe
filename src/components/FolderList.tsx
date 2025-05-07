@@ -13,6 +13,7 @@ const FolderList = ({
   selectedFolderId,
   setIsCreateFolder,
   setFolderName,
+  onClose,
 }: IFolderList) => {
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const { selectFolder, folders, deleteFolder } = useStore();
@@ -34,11 +35,12 @@ const FolderList = ({
     <div
       key={folder.id}
       className={`flex items-center justify-between cursor-pointer p-2 rounded ${
-        selectedFolderId === folder.id
-          ? "bg-gray-50 shadow"
-          : "hover:bg-gray-100"
+        selectedFolderId === folder.id ? "bg-amber-100 " : "hover:bg-gray-100"
       }`}
-      onClick={() => selectFolder(folder.id)}
+      onClick={() => {
+        selectFolder(folder.id);
+        onClose();
+      }}
     >
       <div className="flex gap-2 items-center">
         <Folder style={{ color: folder.color }} size={18} />
@@ -47,14 +49,18 @@ const FolderList = ({
 
       {folder.id !== "all" && (
         <Popover open={showOptions} onOpenChange={setShowOptions}>
-          <PopoverTrigger>
+          <PopoverTrigger onClick={(e) => e.stopPropagation()}>
             <EllipsisVertical size={18} color="#9ca3af" />{" "}
           </PopoverTrigger>
           <PopoverContent className="w-max">
             <div className="flex justify-end flex-col items-end gap-3">
               <button
                 className="inline-flex w-full p-1 justify-end text-gray-500 items-center gap-2 hover:bg-gray-100"
-                onClick={() => handleUpdateFolder(folder.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowOptions(false);
+                  handleUpdateFolder(folder.id);
+                }}
               >
                 <span>Edit</span> <Pencil className="text-gray-400" size={16} />{" "}
               </button>

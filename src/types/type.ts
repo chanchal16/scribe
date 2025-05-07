@@ -40,4 +40,5 @@ export type IFolderList = {
   selectedFolderId: string | null;
   setIsCreateFolder: React.Dispatch<React.SetStateAction<boolean>>;
   setFolderName: React.Dispatch<React.SetStateAction<string>>;
+  onClose: () => void;
 };
