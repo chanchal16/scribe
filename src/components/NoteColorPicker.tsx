@@ -23,12 +23,12 @@ const NoteColorPicker = ({
           <Palette size={18} />
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto flex flex-wrap gap-2 p-2">
+      <PopoverContent className="w-auto z-50 flex flex-wrap gap-2 p-2">
         {noteColors?.map((color: string) => (
           <button
             key={color}
             onClick={() => onChangeColor(color)}
-            className={`w-6 h-6 rounded-full border ${
+            className={`w-6 h-6 color-btn rounded-full border ${
               note?.color === color ? "border-black" : "border-transparent"
             }`}
             style={{ backgroundColor: color }}

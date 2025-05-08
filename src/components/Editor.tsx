@@ -6,156 +6,151 @@ import TextAlign from "@tiptap/extension-text-align";
 import Subscript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
 import { useStore } from "../store/useStore";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { nanoid } from "nanoid";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import Toolbar from "./Toolbar";
-import { PlusIcon } from "lucide-react";
 import NoteColorPicker from "./NoteColorPicker";
 import { toast } from "react-toastify";
 
 const Editor = () => {
-  const {
-    notes,
-    selectedNoteId,
-    addNote,
-    setSelectedNoteId,
-    openDialog,
-    setOpenDialog,
-    selectedFolderId,
-  } = useStore();
-  const note = notes.find((n) => n?.id === selectedNoteId);
+  const { addNote, selectedFolderId } = useStore();
+
   const [title, setTitle] = useState("");
-  const [noteColor, setNoteColor] = useState("#fde68a");
-  const [isCreatingNote, setIsCreatingNote] = useState(false);
+  const [noteColor, setNoteColor] = useState("#fff");
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const editorContainerRef = useRef<HTMLDivElement>(null);
 
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({
-        heading: {
-          levels: [1, 2, 3, 4, 5, 6],
-        },
-      }),
+      StarterKit.configure({ heading: { levels: [1, 2, 3, 4, 5, 6] } }),
       Underline,
       Link,
       Subscript,
       Superscript,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
     ],
-    content: note?.content ?? "",
+    content: "",
   });
 
   useEffect(() => {
-    if (editor) {
-      if (isCreatingNote) {
-        editor.commands.setContent("");
+    if (!isExpanded && editor) {
+      editor.commands.clearContent();
+      setTitle("");
+      setNoteColor("#fff");
+    }
+  }, [isExpanded, editor]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        editorContainerRef.current &&
+        !editorContainerRef.current.contains(event.target as Node)
+      ) {
+        const target = event.target as HTMLElement;
+        console.log("target", target);
+        if (target.closest(".color-btn")) {
+          return;
+        }
+        setIsExpanded(false);
       }
-    }
-  }, [isCreatingNote, editor]);
+    };
 
-  const handleCreateNote = () => {
-    setTitle("");
-    setIsCreatingNote(true);
-    setSelectedNoteId(null);
-    setOpenDialog(true);
-
-    if (editor) {
-      editor.commands.setContent("");
+    if (isExpanded) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
     }
-  };
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isExpanded]);
 
   const handleSaveNote = () => {
-    if (!selectedNoteId) {
-      const newNoteId = nanoid();
-      addNote({
-        id: newNoteId,
-        title: title,
-        content: editor ? editor.getHTML() : "",
-        updatedAt: Date.now(),
-        folderId: "all" && selectedFolderId,
-        color: noteColor ?? "#fde68a",
-      });
+    if (!editor) return;
+    if (!title && editor.getText().trim() === "") {
+      toast.error("Note cannot be empty");
+      return;
     }
+
+    const newNoteId = nanoid();
+    addNote({
+      id: newNoteId,
+      title: title,
+      content: editor.getHTML(),
+      updatedAt: Date.now(),
+      folderId: selectedFolderId || "all",
+      color: noteColor,
+    });
+
     toast("Note Created!");
-    setIsCreatingNote(false);
-    setOpenDialog(false);
-    setTitle("");
-    setSelectedNoteId(null);
+    setIsExpanded(false);
   };
 
   return (
-    <div className="flex flex-col fixed right-4 bottom-4">
-      <Dialog modal={false} open={openDialog} onOpenChange={setOpenDialog}>
-        <DialogTrigger asChild>
-          <button
-            onClick={handleCreateNote}
-            className="bg-amber-500 hover:bg-amber-600 text-white p-3 rounded-full flex items-center"
-          >
-            <PlusIcon size={30} />
-          </button>
-        </DialogTrigger>
-        <DialogContent
-          className="font-kalam"
+    <div className="w-full z-40 max-w-xl mx-auto my-8">
+      {/* Collapsed State */}
+      {!isExpanded && (
+        <div
+          onClick={() => setIsExpanded(true)}
+          className="flex items-center justify-between bg-white rounded-xl shadow-md px-4 py-3 cursor-text"
+        >
+          <span className="text-gray-600">Take a note...</span>
+        </div>
+      )}
+
+      {/* Expanded State */}
+      {isExpanded && (
+        <div
+          ref={editorContainerRef}
+          className="flex flex-col rounded-xl shadow-md p-4"
           style={{ backgroundColor: noteColor }}
         >
-          <DialogHeader>
-            <DialogTitle asChild>
-              <input
-                type="text"
-                value={note?.title ?? title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="text-2xl bg-transparent font-bold mb-4 p-2 w-full focus:outline-none  rounded"
-                placeholder="Note title"
-              />
-            </DialogTitle>
-            <DialogDescription asChild>
-              <div>
-                <div className=" rounded-lg flex-grow overflow-y-auto">
-                  <div className="control-group">
-                    {editor && (
-                      <BubbleMenu editor={editor}>
-                        <Toolbar editor={editor} />
-                      </BubbleMenu>
-                    )}
-                  </div>
-                  <EditorContent
-                    editor={editor}
-                    className="editor-container prose prose-sm prose-p:!my-[2px] sm:prose  max-w-none border-none ring-offset-transparent focus:outline-none h-[300px] prose-headings:!my-1 overflow-y-auto scrollbar-hide px-2"
-                  />
-                </div>
-              </div>
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex-row items-center justify-end">
-            {isCreatingNote && (
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Title"
+            className="text-lg font-semibold bg-transparent mb-2 outline-none"
+          />
+          <div className=" rounded-lg flex-grow overflow-y-auto">
+            {editor && (
               <>
-                <div onClick={(e) => e.stopPropagation()}>
-                  <NoteColorPicker
-                    onChangeColor={(color) => {
-                      console.log("color", color);
-                      setNoteColor(color);
-                    }}
-                  />
-                </div>
-                <button
-                  onClick={handleSaveNote}
-                  className=" font-semibold hover:bg-[#5f636826] py-1.5 px-2 rounded-lg"
-                >
-                  Save
-                </button>
+                <BubbleMenu editor={editor}>
+                  <Toolbar editor={editor} />
+                </BubbleMenu>
+                <EditorContent
+                  editor={editor}
+                  className="editor-container prose prose-sm prose-p:!my-[2px] sm:prose max-w-none border-none ring-offset-transparent focus:outline-none h-[100px] overflow-y-auto scrollbar-hide px-1"
+                />
               </>
             )}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center justify-between mt-3">
+            <div>
+              <NoteColorPicker onChangeColor={(color) => setNoteColor(color)} />
+            </div>
+            <div className="flex items-center gap-3">
+              {/* Can add undo/redo here */}
+              <button
+                onClick={handleSaveNote}
+                className="text-sm font-medium hover:bg-[#5f636826] px-3 py-1 rounded"
+              >
+                Save
+              </button>
+              <button
+                onClick={() => setIsExpanded(false)}
+                className="text-sm font-medium hover:bg-[#5f636826] px-3 py-1 rounded"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

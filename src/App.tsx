@@ -17,8 +17,8 @@ function App() {
           onClose={() => setIsSidebarOpen(false)}
         />
         <div className="w-full">
-          <NotesList />
           <Editor />
+          <NotesList />
           <ToastContainer
             transition={Slide}
             autoClose={3000}

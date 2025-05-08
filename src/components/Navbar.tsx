@@ -22,7 +22,7 @@ const Navbar = ({ onToggleSidebar }: Props) => {
         placeholder="search..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        className="w-4/6 p-1 rounded-lg border border-gray-200 mx-auto outline-none"
+        className="w-4/6 px-2 py-1.5 text-base rounded-lg border border-gray-200 mx-auto outline-none"
       />
     </div>
   );

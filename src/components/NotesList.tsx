@@ -77,7 +77,9 @@ const NotesList = () => {
             return (
               <div
                 key={note.id}
-                ref={(el) => (cardRefs.current[note.id] = el)}
+                ref={(el:HTMLDivElement | null) => {
+                  cardRefs.current[note.id] = el;            
+                }}
                 className={`relative transition-all duration-200 ${
                   isActiveNote ? "z-20" : "z-0"
                 }`}
@@ -88,10 +90,11 @@ const NotesList = () => {
               >
                 <div
                   style={{
-                    backgroundColor: note.color || "#fff475",
+                    backgroundColor: note.color || "#fff",
                   }}
                   className={`
                   rounded cursor-pointer overflow-hidden
+                  ${note.color === '#fff' && 'border'}
                   ${
                     isActiveNote
                       ? "fixed inset-0 m-auto w-[600px] max-w-[90vw] h-[400px] max-h-[80vh] shadow-xl p-6 animate-expand"
