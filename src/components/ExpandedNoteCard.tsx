@@ -20,7 +20,6 @@ const ExpandedNoteCard = ({ note }: { note: Note }) => {
         updatedAt: Date.now(),
         color: note.color,
       });
-      toast('Note updated!')
     },
   });
 
