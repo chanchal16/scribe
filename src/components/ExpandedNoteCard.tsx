@@ -1,11 +1,12 @@
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, BubbleMenu } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { useStore } from "../store/useStore";
 import NoteColorPicker from "./NoteColorPicker";
 import FoldersPopover from "./FoldersPopover";
 import { Trash } from "lucide-react";
 import { Note } from "@/types/type";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
+import Toolbar from "./Toolbar";
 
 const ExpandedNoteCard = ({ note }: { note: Note }) => {
   const { updateNote, deleteNote, setExpandedNoteId } = useStore();
@@ -34,10 +35,15 @@ const ExpandedNoteCard = ({ note }: { note: Note }) => {
         placeholder="Note title"
       />
       {editor && (
-        <EditorContent
-          editor={editor}
-          className="prose editor-container max-w-none border-none focus:outline-none h-[200px] overflow-y-auto scrollbar-hide"
-        />
+        <>
+          <BubbleMenu editor={editor}>
+            <Toolbar editor={editor} />
+          </BubbleMenu>
+          <EditorContent
+            editor={editor}
+            className="prose editor-container max-w-none border-none focus:outline-none h-[200px] overflow-y-auto scrollbar-hide"
+          />
+        </>
       )}
 
       <div className="w-full flex items-center justify-between absolute bottom-0 mt-4">
@@ -55,7 +61,7 @@ const ExpandedNoteCard = ({ note }: { note: Note }) => {
             onClick={() => {
               deleteNote(note.id);
               setExpandedNoteId(null);
-              toast('Note deleted successfully!')
+              toast("Note deleted successfully!");
             }}
             className="p-2 hover:bg-[#5f636826] hover:rounded-full"
           >
