@@ -16,7 +16,7 @@ const Editor = () => {
   const { addNote, selectedFolderId } = useStore();
 
   const [title, setTitle] = useState("");
-  const [noteColor, setNoteColor] = useState("#fde68a");
+  const [noteColor, setNoteColor] = useState("#fff");
   const [isExpanded, setIsExpanded] = useState(false);
 
   const editorContainerRef = useRef<HTMLDivElement>(null);
@@ -37,7 +37,7 @@ const Editor = () => {
     if (!isExpanded && editor) {
       editor.commands.clearContent();
       setTitle("");
-      setNoteColor("#fde68a");
+      setNoteColor("#fff");
     }
   }, [isExpanded, editor]);
 
@@ -47,6 +47,11 @@ const Editor = () => {
         editorContainerRef.current &&
         !editorContainerRef.current.contains(event.target as Node)
       ) {
+        const target = event.target as HTMLElement;
+        console.log("target", target);
+        if (target.closest(".color-btn")) {
+          return;
+        }
         setIsExpanded(false);
       }
     };
@@ -75,7 +80,7 @@ const Editor = () => {
       title: title,
       content: editor.getHTML(),
       updatedAt: Date.now(),
-      folderId: "all" && selectedFolderId,
+      folderId: selectedFolderId || "all",
       color: noteColor,
     });
 
@@ -84,7 +89,7 @@ const Editor = () => {
   };
 
   return (
-    <div className="w-full max-w-xl mx-auto my-8">
+    <div className="w-full z-40 max-w-xl mx-auto my-8">
       {/* Collapsed State */}
       {!isExpanded && (
         <div

@@ -4,7 +4,7 @@ import { persist } from "zustand/middleware";
 
 export const useStore = create<Store>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       folders: [
         {
           id: "all",
